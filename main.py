@@ -39,10 +39,13 @@ def vyhodnot_reakciu():
         else:
             stav = "koniec"
             priemer = round(sum(pokusy) / len(pokusy), 1)
+            najlepsi = min(pokusy)
             plocha.config(bg="#9b59b6")
             plocha.itemconfig(text_plocha, text=f"Priemer: {priemer} ms")
-            lbl_stav.config(text="Hotovo! Všetkých 5 pokusov dokončených.")
-            lbl_vysledky.config(text=f"Pokusy: {pokusy} | Priemer: {priemer} ms")
+            lbl_stav.config(text="Hotovo! Stlač Štart alebo Medzerník pre novú sériu.")
+            lbl_vysledky.config(
+                text=f"Pokusy: {pokusy}\nPriemer: {priemer} ms | Najlepší čas: {najlepsi} ms"
+            )
     elif stav == "koniec":
         lbl_stav.config(text="Test skončil. Stlač Štart, Medzerník alebo Reset.")
     else:
@@ -129,14 +132,20 @@ def reaguj_na_klaves(event):
     elif klaves.lower() == "r":
         resetuj_test()
     elif klaves == "Escape":
-        zrus_casovac()
-        root.destroy()
+        ukonci_aplikaciu()
+
+
+# Callback: reaguje na zatvorenie okna krížikom (WM_DELETE_WINDOW) alebo kláves Esc
+def ukonci_aplikaciu():
+    zrus_casovac()
+    root.destroy()
 
 
 root = tk.Tk()
 root.title("Reakčný test – Téma 3")
-root.geometry("520x500")
+root.geometry("520x520")
 root.resizable(False, False)
+root.protocol("WM_DELETE_WINDOW", ukonci_aplikaciu)
 
 lbl_stav = tk.Label(
     root,
@@ -181,7 +190,7 @@ lbl_rezim = tk.Label(root, text="Režim čakania: Krátke (1–3 s)", font=("Ari
 lbl_rezim.pack(pady=2)
 
 lbl_vysledky = tk.Label(root, text="Pokusy: 0/5", font=("Arial", 11, "bold"))
-lbl_vysledky.pack(pady=6)
+lbl_vysledky.pack(pady=8)
 
 lbl_info = tk.Label(root, text="Posledná akcia: –", font=("Arial", 9), fg="gray")
 lbl_info.pack(pady=4)
